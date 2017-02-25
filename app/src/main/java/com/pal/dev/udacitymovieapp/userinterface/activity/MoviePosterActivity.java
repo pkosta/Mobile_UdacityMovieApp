@@ -12,7 +12,7 @@ import com.pal.dev.udacitymovieapp.R;
 /**
  * Displays the posters for all needed movies in grid manner.
  *
- * @author Palash Kosta
+ * @author Palash Kosta (kosta.palash@gmail.com)
  */
 
 public class MoviePosterActivity extends AppCompatActivity {
