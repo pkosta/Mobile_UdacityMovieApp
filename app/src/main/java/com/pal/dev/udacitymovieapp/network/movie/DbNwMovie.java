@@ -17,43 +17,43 @@ import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 @SuppressWarnings("unused")
 public class DbNwMovie implements DbNwMovieInterface {
 
-    @SerializedName("poster_path")
+    @SerializedName(NetworkKeyConstant.KEY_POSTER_PATH)
     private String posterPath;
 
-    @SerializedName("adult")
+    @SerializedName(NetworkKeyConstant.KEY_ADULT)
     private boolean isAdultMovie;
 
-    @SerializedName("overview")
+    @SerializedName(NetworkKeyConstant.KEY_OVERVIEW)
     private String overview;        // description of the movie.
 
-    @SerializedName("release_date")
+    @SerializedName(NetworkKeyConstant.KEY_RELEASE_DATE)
     private String releaseDate;
 
-    @SerializedName("id")
+    @SerializedName(NetworkKeyConstant.KEY_MOVIE_ID)
     private long movieId;
 
-    @SerializedName("original_title")
+    @SerializedName(NetworkKeyConstant.KEY_ORIGINAL_TITLE)
     private String originalTitle;   // primary title of the movie.
 
-    @SerializedName("original_language")
+    @SerializedName(NetworkKeyConstant.KEY_ORIGINAL_LANGUAGE)
     private String originalLanguage;
 
-    @SerializedName("title")
+    @SerializedName(NetworkKeyConstant.KEY_TITLE)
     private String title;
 
-    @SerializedName("backdrop_path")
+    @SerializedName(NetworkKeyConstant.KEY_BACKDROP_PATH)
     private String backdropPath;
 
-    @SerializedName("popularity")
+    @SerializedName(NetworkKeyConstant.KEY_POPULARITY)
     private double popularity;
 
-    @SerializedName("vote_count")
+    @SerializedName(NetworkKeyConstant.KEY_VOTE_COUNT)
     private long voteCount;
 
-    @SerializedName("video")
+    @SerializedName(NetworkKeyConstant.KEY_VIDEO)
     private boolean isVideoPresent;
 
-    @SerializedName("vote_average")
+    @SerializedName(NetworkKeyConstant.KEY_VOTE_AVERAGE)
     private float voteAverage;
 
     // constructor to be populated when network returns the result.
@@ -140,4 +140,5 @@ public class DbNwMovie implements DbNwMovieInterface {
         return new UiMovie(this.posterPath, this.overview, this.releaseDate, this.movieId,
                 this.originalTitle, this.popularity, this.voteCount, this.voteAverage);
     }
+
 }

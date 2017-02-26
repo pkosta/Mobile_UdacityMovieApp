@@ -10,6 +10,7 @@ package com.pal.dev.udacitymovieapp.userinterface.model;
 
 import android.support.annotation.NonNull;
 
+
 public interface DbNwMovieInterface {
 
     @NonNull UiMovie constructUiMovie();
