@@ -62,7 +62,7 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
         // checking the save instance state if exist use saved data.
         // this is may be due to screen orientation.
         if(savedInstanceState != null
-                && savedInstanceState.getParcelableArrayList(BundleConstants.BUNDLE_MOVIE_LIST) != null) {
+                && savedInstanceState.containsKey(BundleConstants.BUNDLE_MOVIE_LIST)) {
 
             ArrayList<UiMovie> savedList = savedInstanceState.getParcelableArrayList(BundleConstants.BUNDLE_MOVIE_LIST);
 
