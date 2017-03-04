@@ -18,43 +18,43 @@ import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 public class DbNwMovie implements DbNwMovieInterface {
 
     @SerializedName(NetworkKeyConstant.KEY_POSTER_PATH)
-    private String posterPath;
+    private final String posterPath;
 
     @SerializedName(NetworkKeyConstant.KEY_ADULT)
-    private boolean isAdultMovie;
+    private final boolean isAdultMovie;
 
     @SerializedName(NetworkKeyConstant.KEY_OVERVIEW)
-    private String overview;        // description of the movie.
+    private final String overview;        // description of the movie.
 
     @SerializedName(NetworkKeyConstant.KEY_RELEASE_DATE)
-    private String releaseDate;
+    private final String releaseDate;
 
     @SerializedName(NetworkKeyConstant.KEY_MOVIE_ID)
-    private long movieId;
+    private final long movieId;
 
     @SerializedName(NetworkKeyConstant.KEY_ORIGINAL_TITLE)
-    private String originalTitle;   // primary title of the movie.
+    private final String originalTitle;   // primary title of the movie.
 
     @SerializedName(NetworkKeyConstant.KEY_ORIGINAL_LANGUAGE)
-    private String originalLanguage;
+    private final String originalLanguage;
 
     @SerializedName(NetworkKeyConstant.KEY_TITLE)
-    private String title;
+    private final String title;
 
     @SerializedName(NetworkKeyConstant.KEY_BACKDROP_PATH)
-    private String backdropPath;
+    private final String backdropPath;
 
     @SerializedName(NetworkKeyConstant.KEY_POPULARITY)
-    private double popularity;
+    private final double popularity;
 
     @SerializedName(NetworkKeyConstant.KEY_VOTE_COUNT)
-    private long voteCount;
+    private final long voteCount;
 
     @SerializedName(NetworkKeyConstant.KEY_VIDEO)
-    private boolean isVideoPresent;
+    private final boolean isVideoPresent;
 
     @SerializedName(NetworkKeyConstant.KEY_VOTE_AVERAGE)
-    private float voteAverage;
+    private final float voteAverage;
 
     // constructor to be populated when network returns the result.
 

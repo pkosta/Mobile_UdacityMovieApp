@@ -4,7 +4,7 @@
 
 package com.pal.dev.udacitymovieapp.network;
 
-/**
+/*
  * Created by Palash on 26/02/17.
  */
 

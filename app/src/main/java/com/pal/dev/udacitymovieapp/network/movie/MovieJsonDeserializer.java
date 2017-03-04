@@ -8,8 +8,6 @@ package com.pal.dev.udacitymovieapp.network.movie;
  * Created by Palash on 26/02/17.
  */
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -23,8 +21,6 @@ public class MovieJsonDeserializer implements JsonDeserializer<List<DbNwMovie>> 
     @Override
     public List<DbNwMovie> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-
-        Log.d("BUGS","JON: "+json);
 
         // Get the "content" element from the parsed JSON
         JsonElement content = json.getAsJsonObject().get(NetworkKeyConstant.CONSTANT_ROOT_TAG);

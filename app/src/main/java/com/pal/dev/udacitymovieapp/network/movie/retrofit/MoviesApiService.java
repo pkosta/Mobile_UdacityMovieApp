@@ -15,11 +15,14 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface MoviesApiService {
+interface MoviesApiService {
 
-    @GET("/3/movie/popular")
-    Call<List<DbNwMovie>> fetchPopularMovies(@Query(NetworkKeyConstant.CONSTANT_API_KEY) String key);
+    @GET("/3/movie/{sort}")
+    Call<List<DbNwMovie>> fetchPopularMovies(
+            @Path("sort") String aSortOrder,
+            @Query(NetworkKeyConstant.CONSTANT_API_KEY) String key);
 
 }

@@ -14,6 +14,10 @@ public class NetworkKeyConstant {
 
     static final String CONSTANT_ROOT_TAG = "results";
 
+    public static final String SORT_POPULARITY = "popular";
+
+    public static final String SORT_TOP_RATED = "top_rated";
+
     static final String KEY_POSTER_PATH = "poster_path";
 
     static final String KEY_ADULT = "adult";
