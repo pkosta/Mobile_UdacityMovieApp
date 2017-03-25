@@ -4,12 +4,15 @@
 
 package com.pal.dev.udacitymovieapp.network.movie.retrofit;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pal.dev.udacitymovieapp.annotation.SortType;
 import com.pal.dev.udacitymovieapp.network.MovieNetworkManager;
 import com.pal.dev.udacitymovieapp.network.NetworkOperationCallback;
 import com.pal.dev.udacitymovieapp.network.movie.DbNwMovie;
+import com.pal.dev.udacitymovieapp.network.movie.DbNwMovieTrailer;
 import com.pal.dev.udacitymovieapp.network.movie.MovieJsonDeserializer;
 import com.pal.dev.udacitymovieapp.network.movie.NetworkKeyConstant;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
@@ -151,7 +154,30 @@ public class MoviesApiImpl implements MovieNetworkManager {
                     });
 
         }
+    }
 
+    @Override
+    public void getMovieTrailers(long movieId,
+                                 NetworkOperationCallback<String, List<DbNwMovieTrailer>> networkOperationCallback) {
+
+        retrofit.create(MoviesApiService.class).fetchMovieTrailers(movieId, ConfigConstant.API_KEY)
+                .enqueue(new Callback<List<DbNwMovieTrailer>>() {
+                    @Override
+                    public void onResponse(Call<List<DbNwMovieTrailer>> call, Response<List<DbNwMovieTrailer>> response) {
+
+                        if(response.code() == 200) {
+                            Log.d("BUGS", "Trailer size for Movies:" + response.body().size());
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<DbNwMovieTrailer>> call, Throwable t) {
+
+                        Log.d("BUGS", "Fetching trailer is failed.");
+
+                    }
+                });
 
     }
 

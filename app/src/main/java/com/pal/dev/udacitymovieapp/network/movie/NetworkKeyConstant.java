@@ -44,4 +44,17 @@ public class NetworkKeyConstant {
 
     static final String KEY_VOTE_AVERAGE = "vote_average";
 
+    // GET MOVIE VIDEOS
+
+    static final String KEY_MOVIE_VIDEO_ID = "id";
+
+    static final String KEY_MOVIE_VIDEO_KEY = "key";
+
+    static final String KEY_MOVIE_VIDEO_NAME = "name";
+
+    static final String KEY_MOVIE_VIDEO_SITE = "site";
+
+    static final String KEY_MOVIE_VIDEO_SIZE = "size";
+
+    static final String KEY_MOVIE_VIDEO_TYPE = "type";
 }

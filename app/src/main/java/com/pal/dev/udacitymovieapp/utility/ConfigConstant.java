@@ -12,7 +12,7 @@ package com.pal.dev.udacitymovieapp.utility;
 
 public class ConfigConstant {
 
-    public static final String BASE_URL = "http://api.themoviedb.org";
+    public static final String BASE_URL = "https://api.themoviedb.org";
 
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
 

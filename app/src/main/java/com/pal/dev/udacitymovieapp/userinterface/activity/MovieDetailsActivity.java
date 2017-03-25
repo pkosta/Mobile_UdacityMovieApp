@@ -11,9 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pal.dev.udacitymovieapp.R;
+import com.pal.dev.udacitymovieapp.network.MovieNetworkManager;
+import com.pal.dev.udacitymovieapp.network.NetworkFactory;
+import com.pal.dev.udacitymovieapp.network.NetworkOperationCallback;
+import com.pal.dev.udacitymovieapp.network.movie.DbNwMovieTrailer;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 import com.pal.dev.udacitymovieapp.utility.BundleConstants;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * Created by Palash
@@ -52,7 +58,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             // if the current movie is not null. we can uodate the user interface.
             updateUserInterface();      // update the UI.
         }
-
     }
 
     /**
@@ -118,6 +123,31 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .load(mCurrentUiMovie.getPosterPath())
                 .placeholder(R.color.colorAccent)
                 .into(mIvMoviePoster);
+
+
+
+        // temp WB calling.
+        // temp
+        MovieNetworkManager movieNetworkManager =
+                new NetworkFactory().getMovieNetworkManager();
+
+        movieNetworkManager.getMovieTrailers(mCurrentUiMovie.getMovieId(),
+                new NetworkOperationCallback<String, List<DbNwMovieTrailer>>() {
+            @Override
+            public void onSuccess(String s, List<DbNwMovieTrailer> dbNwMovieTrailers) {
+
+            }
+
+            @Override
+            public void onFailure(String s, Throwable throwable) {
+
+            }
+
+            @Override
+            public void onUnAuthorized() {
+
+            }
+        });
     }
 
 }
