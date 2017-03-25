@@ -9,8 +9,8 @@ package com.pal.dev.udacitymovieapp.network;
  */
 
 import com.pal.dev.udacitymovieapp.annotation.SortType;
-import com.pal.dev.udacitymovieapp.network.movie.DbNwMovieTrailer;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
+import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 
 import java.util.List;
 
@@ -20,5 +20,5 @@ public interface MovieNetworkManager {
                           NetworkOperationCallback<String, List<UiMovie>> networkOperationCallback);
 
     void getMovieTrailers(long movieId,
-                          NetworkOperationCallback<String, List<DbNwMovieTrailer>> networkOperationCallback);
+                          NetworkOperationCallback<String, List<UiMovieTrailer>> networkOperationCallback);
 }

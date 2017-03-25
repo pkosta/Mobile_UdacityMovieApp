@@ -92,9 +92,4 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
             }
         }
     }
-
-    // List item click listener.
-    public interface ListItemClickListener {
-        void onListItemClick(int clickedItemPosition);
-    }
 }

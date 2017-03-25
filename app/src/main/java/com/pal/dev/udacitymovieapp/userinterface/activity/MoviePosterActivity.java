@@ -24,6 +24,7 @@ import com.pal.dev.udacitymovieapp.annotation.SortType;
 import com.pal.dev.udacitymovieapp.network.MovieNetworkManager;
 import com.pal.dev.udacitymovieapp.network.NetworkFactory;
 import com.pal.dev.udacitymovieapp.network.NetworkOperationCallback;
+import com.pal.dev.udacitymovieapp.userinterface.adapter.ListItemClickListener;
 import com.pal.dev.udacitymovieapp.userinterface.adapter.MoviePosterAdapter;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 import com.pal.dev.udacitymovieapp.utility.BundleConstants;
@@ -40,7 +41,7 @@ import static android.view.View.GONE;
  * @author Palash Kosta (kosta.palash@gmail.com)
  */
 
-public class MoviePosterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MoviePosterAdapter.ListItemClickListener {
+public class MoviePosterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, ListItemClickListener {
 
     private RecyclerView mRvGridMoviePosters;
 

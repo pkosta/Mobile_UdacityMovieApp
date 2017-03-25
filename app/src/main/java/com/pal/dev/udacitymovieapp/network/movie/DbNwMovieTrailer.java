@@ -8,10 +8,14 @@ package com.pal.dev.udacitymovieapp.network.movie;
  * Created by Palash on 26/02/17.
  */
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
+import com.pal.dev.udacitymovieapp.userinterface.model.DbNwMovieTrailerInterface;
+import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 
 @SuppressWarnings("unused")
-public class DbNwMovieTrailer {
+public class DbNwMovieTrailer implements DbNwMovieTrailerInterface{
 
     @SerializedName(NetworkKeyConstant.KEY_MOVIE_VIDEO_ID)
     private final String videoId;
@@ -46,4 +50,9 @@ public class DbNwMovieTrailer {
     }
 
 
+    @NonNull
+    @Override
+    public UiMovieTrailer constructUiMovie() {
+        return new UiMovieTrailer(videoId, videoKey, videoName, videoSite, videoSize, videoType);
+    }
 }

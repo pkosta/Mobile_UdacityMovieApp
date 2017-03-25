@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017. The Android Open Source Project
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/dp_16"
+        android:background="@android:drawable/ic_media_play"/>
+
+    <TextView
+        android:id="@+id/tv_movie_trailer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_32"
+        android:textSize="@dimen/sp_17sp"
+        android:layout_gravity="center_vertical"
+        tools:text="MovieTrailerName"/>
+
+</LinearLayout>
+

@@ -4,8 +4,12 @@
 
 package com.pal.dev.udacitymovieapp.userinterface.activity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,11 +18,14 @@ import com.pal.dev.udacitymovieapp.R;
 import com.pal.dev.udacitymovieapp.network.MovieNetworkManager;
 import com.pal.dev.udacitymovieapp.network.NetworkFactory;
 import com.pal.dev.udacitymovieapp.network.NetworkOperationCallback;
-import com.pal.dev.udacitymovieapp.network.movie.DbNwMovieTrailer;
+import com.pal.dev.udacitymovieapp.userinterface.adapter.ListItemClickListener;
+import com.pal.dev.udacitymovieapp.userinterface.adapter.MovieVideosAdapter;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
+import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 import com.pal.dev.udacitymovieapp.utility.BundleConstants;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +34,7 @@ import java.util.List;
  * Activity class for movie details screens.
  */
 
-public class MovieDetailsActivity extends AppCompatActivity {
+public class MovieDetailsActivity extends AppCompatActivity implements ListItemClickListener {
 
     private UiMovie mCurrentUiMovie;
 
@@ -42,6 +49,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView mTvMovieOverview;
 
     private ImageView mIvMoviePoster;
+
+    private MovieVideosAdapter mMovieVideoAdapter;
+
+    private RecyclerView mRvMovieVideos;
+
+    private List<UiMovieTrailer> mMovieTrailers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +104,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         mIvMoviePoster = (ImageView) findViewById(R.id.iv_movie_poster);
 
+        mRvMovieVideos = (RecyclerView) findViewById(R.id.rv_movie_videos);
+
     }
 
     /**
@@ -132,10 +147,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 new NetworkFactory().getMovieNetworkManager();
 
         movieNetworkManager.getMovieTrailers(mCurrentUiMovie.getMovieId(),
-                new NetworkOperationCallback<String, List<DbNwMovieTrailer>>() {
+                new NetworkOperationCallback<String, List<UiMovieTrailer>>() {
             @Override
-            public void onSuccess(String s, List<DbNwMovieTrailer> dbNwMovieTrailers) {
-
+            public void onSuccess(String s, List<UiMovieTrailer> dbNwMovieTrailers) {
+                showMovieVideos(dbNwMovieTrailers);
             }
 
             @Override
@@ -150,4 +165,36 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
     }
 
+    private void showMovieVideos(List<UiMovieTrailer> movieTrailers) {
+
+        mMovieTrailers = new ArrayList<>(movieTrailers);
+
+        if(mMovieVideoAdapter != null) {
+
+            mMovieVideoAdapter.updateDataList(movieTrailers);
+            mMovieVideoAdapter.notifyDataSetChanged();
+
+        } else {
+
+            mRvMovieVideos.setLayoutManager(new LinearLayoutManager(this));
+            mMovieVideoAdapter = new MovieVideosAdapter(this, movieTrailers, this);
+            mRvMovieVideos.setAdapter(mMovieVideoAdapter);
+            mMovieVideoAdapter.notifyDataSetChanged();
+
+        }
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemPosition) {
+        watchYoutubeVideo(mMovieTrailers.get(clickedItemPosition).getVideoKey());
+    }
+
+    public void watchYoutubeVideo(String id){
+        //Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.youtube.com/watch?v="+id));
+        appIntent.putExtra("VIDEO_ID", id);
+        if(appIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(appIntent);
+        }
+    }
 }

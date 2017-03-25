@@ -16,6 +16,7 @@ import com.pal.dev.udacitymovieapp.network.movie.DbNwMovieTrailer;
 import com.pal.dev.udacitymovieapp.network.movie.MovieJsonDeserializer;
 import com.pal.dev.udacitymovieapp.network.movie.NetworkKeyConstant;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
+import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 import com.pal.dev.udacitymovieapp.utility.ConfigConstant;
 
 import java.util.ArrayList;
@@ -158,7 +159,7 @@ public class MoviesApiImpl implements MovieNetworkManager {
 
     @Override
     public void getMovieTrailers(long movieId,
-                                 NetworkOperationCallback<String, List<DbNwMovieTrailer>> networkOperationCallback) {
+                                 final NetworkOperationCallback<String, List<UiMovieTrailer>> networkOperationCallback) {
 
         retrofit.create(MoviesApiService.class).fetchMovieTrailers(movieId, ConfigConstant.API_KEY)
                 .enqueue(new Callback<List<DbNwMovieTrailer>>() {
@@ -167,6 +168,15 @@ public class MoviesApiImpl implements MovieNetworkManager {
 
                         if(response.code() == 200) {
                             Log.d("BUGS", "Trailer size for Movies:" + response.body().size());
+                            List<UiMovieTrailer> uiMovieTrailers = new ArrayList<>();
+
+                            for(DbNwMovieTrailer dbNwMovieTrailer : response.body()) {
+                                uiMovieTrailers.add(dbNwMovieTrailer.constructUiMovie());
+                            }
+
+                            if(networkOperationCallback != null) {
+                                networkOperationCallback.onSuccess("", uiMovieTrailers);
+                            }
                         }
 
                     }
