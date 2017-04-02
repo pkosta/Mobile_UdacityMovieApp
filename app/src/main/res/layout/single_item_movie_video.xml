@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2017. The Android Open Source Project
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/dp_8">
+
+
+        <ImageView
+            android:id="@+id/iv_play_trailor"
+            android:contentDescription="@string/content_description_play_movie_trailer_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/dp_8"
+            android:background="@drawable/ic_play_arrow_black_36px" />
+
+        <TextView
+            android:id="@+id/tv_movie_trailer_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_toEndOf="@+id/iv_play_trailor"
+            android:textSize="@dimen/sp_17sp"
+            tools:text="MovieTrailerName" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/iv_play_trailor"
+            android:layout_marginTop="@dimen/dp_8"
+            android:background="@android:color/darker_gray" />
+
+
+    </RelativeLayout>
+
+</layout>
+

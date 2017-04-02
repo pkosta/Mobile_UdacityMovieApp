@@ -18,4 +18,8 @@ public class BundleConstants {
 
     public static final String BUNDLE_MOVIE_LIST = "bundle_movie_list";
 
+    public static final String BUNDLE_MOVIE_TRAILER_LIST = "bundle_movie_trailer_list";
+
+    public static final String BUNDLE_MOVIE_REVIEW_LIST = "bundle_movie_review_list";
+
 }
