@@ -23,7 +23,7 @@ public class MovieJsonDeserializer implements JsonDeserializer<List<DbNwMovie>> 
             throws JsonParseException {
 
         // Get the "content" element from the parsed JSON
-        JsonElement content = json.getAsJsonObject().get(NetworkKeyConstant.CONSTANT_ROOT_TAG);
+        JsonElement content = json.getAsJsonObject().get(MovieNetworkContract.CONSTANT_ROOT_TAG);
 
         // Deserialize it. You use a new instance of Gson to avoid infinite recursion
         // to this deserializer

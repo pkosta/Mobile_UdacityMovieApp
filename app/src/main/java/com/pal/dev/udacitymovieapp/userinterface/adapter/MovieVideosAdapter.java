@@ -12,17 +12,17 @@ import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 
 import java.util.List;
 
-/**
+/*
  * Created by Palash on 25/03/17.
  */
 
 public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.MovieVideoViewHolder> {
 
-    Context mContext;
+    private Context mContext;
 
-    List<UiMovieTrailer> mMovieTrailerList;
+    private List<UiMovieTrailer> mMovieTrailerList;
 
-    ListItemClickListener mItemClickListener;
+    private ListItemClickListener mItemClickListener;
 
     public MovieVideosAdapter(Context context, List<UiMovieTrailer> movieTrailers,
                               ListItemClickListener listener) {

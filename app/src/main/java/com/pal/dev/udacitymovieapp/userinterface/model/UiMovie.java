@@ -4,7 +4,7 @@
 
 package com.pal.dev.udacitymovieapp.userinterface.model;
 
-/**
+/*
  * Created by Palash on 26/02/17.
  *
  * Core object of the Movie. This object will be related to the object
@@ -15,7 +15,7 @@ package com.pal.dev.udacitymovieapp.userinterface.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.pal.dev.udacitymovieapp.utility.ConfigConstant;
+import com.pal.dev.udacitymovieapp.network.movie.MovieNetworkContract;
 
 @SuppressWarnings("unused")
 public class UiMovie implements Parcelable {
@@ -36,11 +36,13 @@ public class UiMovie implements Parcelable {
 
     private final float voteAverage;
 
+    private boolean isFavorite = false;
+
     // constructor - attributes required only used for UI.
     public UiMovie(String posterPath, String overview,
                    String releaseDate, long movieId,
                    String originalTitle, double popularity,
-                   long voteCount, float voteAverage) {
+                   long voteCount, float voteAverage, boolean isFavorite) {
 
         this.posterPath = posterPath;
         this.overview = overview;
@@ -51,6 +53,7 @@ public class UiMovie implements Parcelable {
         this.voteCount = voteCount;
         this.voteAverage = voteAverage;
 
+        this.isFavorite = isFavorite;
     }
 
     private UiMovie(Parcel in) {
@@ -62,6 +65,7 @@ public class UiMovie implements Parcelable {
         popularity = in.readDouble();
         voteCount = in.readLong();
         voteAverage = in.readFloat();
+        isFavorite = in.readByte() != 0;
     }
 
     public static final Creator<UiMovie> CREATOR = new Creator<UiMovie>() {
@@ -77,7 +81,11 @@ public class UiMovie implements Parcelable {
     };
 
     public String getPosterPath() {
-        return ConfigConstant.IMAGE_BASE_URL + "/" + ConfigConstant.IMAGE_SIZE +
+        return posterPath;
+    }
+
+    public String getPosterFullImagePath(){
+        return MovieNetworkContract.IMAGE_BASE_URL + "/" + MovieNetworkContract.IMAGE_SIZE +
                 "/" + posterPath;
     }
 
@@ -109,7 +117,9 @@ public class UiMovie implements Parcelable {
         return voteAverage;
     }
 
-
+    public boolean isFavorite() {
+        return isFavorite;
+    }
 
 
     @Override
@@ -128,6 +138,8 @@ public class UiMovie implements Parcelable {
         dest.writeDouble(popularity);
         dest.writeLong(voteCount);
         dest.writeFloat(voteAverage);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));     //if myBoolean == true, byte == 1
+
     }
 
 }

@@ -1,10 +1,13 @@
 package com.pal.dev.udacitymovieapp.userinterface.model;
 
-/**
+/*
  * Created by Palash on 25/03/17.
  */
 
-public class UiMovieTrailer {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class UiMovieTrailer implements Parcelable{
 
     private final String videoId;
 
@@ -32,6 +35,27 @@ public class UiMovieTrailer {
 
     }
 
+    private UiMovieTrailer(Parcel in) {
+        this.videoId = in.readString();
+        this.videoKey = in.readString();
+        this.videoName = in.readString();
+        this.videoSite = in.readString();
+        this.videoSize = in.readLong();
+        this.videoType = in.readString();
+    }
+
+
+    public static final Creator<UiMovieTrailer> CREATOR = new Creator<UiMovieTrailer>() {
+        @Override
+        public UiMovieTrailer createFromParcel(Parcel in) {
+            return new UiMovieTrailer(in);
+        }
+
+        @Override
+        public UiMovieTrailer[] newArray(int size) {
+            return new UiMovieTrailer[size];
+        }
+    };
 
     public String getVideoId() {
         return videoId;
@@ -55,5 +79,20 @@ public class UiMovieTrailer {
 
     public String getVideoType() {
         return videoType;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.videoId);
+        dest.writeString(this.videoKey);
+        dest.writeString(this.videoName);
+        dest.writeString(this.videoSite);
+        dest.writeLong(this.videoSize);
+        dest.writeString(this.videoType);
     }
 }

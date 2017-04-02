@@ -2,28 +2,40 @@
   ~ Copyright (c) 2017. The Android Open Source Project
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/dp_8"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
 
 
     <ImageView
+        android:id="@+id/iv_play_trailor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/dp_16"
-        android:background="@android:drawable/ic_media_play"/>
+        android:layout_marginStart="@dimen/dp_8"
+        android:background="@drawable/ic_play_arrow_black_36px"/>
 
     <TextView
         android:id="@+id/tv_movie_trailer_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/iv_play_trailor"
+        android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/dp_32"
         android:textSize="@dimen/sp_17sp"
         android:layout_gravity="center_vertical"
         tools:text="MovieTrailerName"/>
 
-</LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="@dimen/dp_8"
+        android:layout_below="@+id/iv_play_trailor"/>
+
+
+</RelativeLayout>
 

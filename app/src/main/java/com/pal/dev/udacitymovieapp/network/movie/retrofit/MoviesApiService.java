@@ -9,8 +9,9 @@ package com.pal.dev.udacitymovieapp.network.movie.retrofit;
  */
 
 import com.pal.dev.udacitymovieapp.network.movie.DbNwMovie;
+import com.pal.dev.udacitymovieapp.network.movie.DbNwMovieReview;
 import com.pal.dev.udacitymovieapp.network.movie.DbNwMovieTrailer;
-import com.pal.dev.udacitymovieapp.network.movie.NetworkKeyConstant;
+import com.pal.dev.udacitymovieapp.network.movie.MovieNetworkContract;
 
 import java.util.List;
 
@@ -24,11 +25,16 @@ interface MoviesApiService {
     @GET("/3/movie/{sort}")
     Call<List<DbNwMovie>> fetchPopularMovies(
             @Path("sort") String aSortOrder,
-            @Query(NetworkKeyConstant.CONSTANT_API_KEY) String key);
+            @Query(MovieNetworkContract.CONSTANT_API_KEY) String key);
 
     @GET("/3/movie/{movie_id}/videos")
     Call<List<DbNwMovieTrailer>> fetchMovieTrailers(
             @Path("movie_id") long aMovieId,
-            @Query(NetworkKeyConstant.CONSTANT_API_KEY) String key);
+            @Query(MovieNetworkContract.CONSTANT_API_KEY) String key);
+
+    @GET("/3/movie/{id}/reviews")
+    Call<List<DbNwMovieReview>> fetchMovieRevies(
+            @Path("id") long aMovieId,
+            @Query(MovieNetworkContract.CONSTANT_API_KEY) String key);
 
 }

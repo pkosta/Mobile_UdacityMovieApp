@@ -8,7 +8,15 @@ package com.pal.dev.udacitymovieapp.network.movie;
  * Created by Palash on 26/02/17.
  */
 
-public class NetworkKeyConstant {
+public class MovieNetworkContract {
+
+    public static final String BASE_URL = "https://api.themoviedb.org";
+
+    public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
+
+    public final static String IMAGE_SIZE = "w185";
+
+    public static final String API_KEY = "";      // TODO - Place your key here.
 
     public static final String CONSTANT_API_KEY = "api_key";
 
@@ -57,4 +65,14 @@ public class NetworkKeyConstant {
     static final String KEY_MOVIE_VIDEO_SIZE = "size";
 
     static final String KEY_MOVIE_VIDEO_TYPE = "type";
+
+    // GET MOVIE REVIEWS
+
+    static final String KEY_MOVIE_REVIEW_ID = "id";
+
+    static final String KEY_MOVIE_REVIEW_AUTHOR = "author";
+
+    static final String KEY_MOVIE_REVIEW_CONTENT = "content";
+
+    static final String KEY_MOVIE_REVIEW_URL = "url";
 }

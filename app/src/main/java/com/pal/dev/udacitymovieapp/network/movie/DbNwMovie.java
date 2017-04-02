@@ -17,43 +17,43 @@ import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 @SuppressWarnings("unused")
 public class DbNwMovie implements DbNwMovieInterface {
 
-    @SerializedName(NetworkKeyConstant.KEY_POSTER_PATH)
+    @SerializedName(MovieNetworkContract.KEY_POSTER_PATH)
     private final String posterPath;
 
-    @SerializedName(NetworkKeyConstant.KEY_ADULT)
+    @SerializedName(MovieNetworkContract.KEY_ADULT)
     private final boolean isAdultMovie;
 
-    @SerializedName(NetworkKeyConstant.KEY_OVERVIEW)
+    @SerializedName(MovieNetworkContract.KEY_OVERVIEW)
     private final String overview;        // description of the movie.
 
-    @SerializedName(NetworkKeyConstant.KEY_RELEASE_DATE)
+    @SerializedName(MovieNetworkContract.KEY_RELEASE_DATE)
     private final String releaseDate;
 
-    @SerializedName(NetworkKeyConstant.KEY_MOVIE_ID)
+    @SerializedName(MovieNetworkContract.KEY_MOVIE_ID)
     private final long movieId;
 
-    @SerializedName(NetworkKeyConstant.KEY_ORIGINAL_TITLE)
+    @SerializedName(MovieNetworkContract.KEY_ORIGINAL_TITLE)
     private final String originalTitle;   // primary title of the movie.
 
-    @SerializedName(NetworkKeyConstant.KEY_ORIGINAL_LANGUAGE)
+    @SerializedName(MovieNetworkContract.KEY_ORIGINAL_LANGUAGE)
     private final String originalLanguage;
 
-    @SerializedName(NetworkKeyConstant.KEY_TITLE)
+    @SerializedName(MovieNetworkContract.KEY_TITLE)
     private final String title;
 
-    @SerializedName(NetworkKeyConstant.KEY_BACKDROP_PATH)
+    @SerializedName(MovieNetworkContract.KEY_BACKDROP_PATH)
     private final String backdropPath;
 
-    @SerializedName(NetworkKeyConstant.KEY_POPULARITY)
+    @SerializedName(MovieNetworkContract.KEY_POPULARITY)
     private final double popularity;
 
-    @SerializedName(NetworkKeyConstant.KEY_VOTE_COUNT)
+    @SerializedName(MovieNetworkContract.KEY_VOTE_COUNT)
     private final long voteCount;
 
-    @SerializedName(NetworkKeyConstant.KEY_VIDEO)
+    @SerializedName(MovieNetworkContract.KEY_VIDEO)
     private final boolean isVideoPresent;
 
-    @SerializedName(NetworkKeyConstant.KEY_VOTE_AVERAGE)
+    @SerializedName(MovieNetworkContract.KEY_VOTE_AVERAGE)
     private final float voteAverage;
 
     // constructor to be populated when network returns the result.
@@ -138,7 +138,7 @@ public class DbNwMovie implements DbNwMovieInterface {
     @Override
     public @NonNull UiMovie constructUiMovie() {
         return new UiMovie(this.posterPath, this.overview, this.releaseDate, this.movieId,
-                this.originalTitle, this.popularity, this.voteCount, this.voteAverage);
+                this.originalTitle, this.popularity, this.voteCount, this.voteAverage, false);
     }
 
 }

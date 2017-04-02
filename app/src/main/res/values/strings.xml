@@ -2,8 +2,9 @@
     <string name="app_name">UdacityMovieApp</string>
 
     <string name="sort_popularity">Most Popular</string>
-
     <string name="sort_rating">Highest Rated</string>
+
+    <string name="sort_favorite">Favorite Movies</string>
     <string name="lbl_tv_release_date" >Release Date:</string>
 
     <string name="content_desc_movie_poster">Movie Poster</string>
@@ -11,10 +12,25 @@
     <string-array name="sort_array">
         <item>@string/sort_popularity</item>
         <item>@string/sort_rating</item>
+        <item>@string/sort_favorite</item>
     </string-array>
+
     <string name="lbl_tv_user_rating">User Rating:</string>
     <string name="lbl_toolbar_movie_details">Movie Details</string>
     <string name="lbl_toolbar_most_popular_movies">Most Popular Movies</string>
     <string name="lbl_toolbar_most_rated_movies">Top Rated Movies</string>
+    <string name="lbl_toolbar_favorites_movies">Favorite Movies</string>
     <string name="text_no_data_available">No data is available. Please check internet connectivity.</string>
+
+    <string name="lbl_heading_trailers">Trailers: %1$s</string>
+    <string name="lbl_heading_reviews">Reviews: %1$s</string>
+
+    <string name="msg_loading">Loading…</string>
+    <string name="lbl_title_add_favorite">Add Favorite</string>
+    <string name="lbl_msg_add_favorite">By adding favorite, movie details will be accessible from Main screen and will work with offline mode.</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_cancel">Cancel</string>
+
+    <string name="content_description_image_button_fav">Add movie as favorite</string>
+
 </resources>

@@ -14,6 +14,8 @@ import android.widget.ImageView;
 
 import com.pal.dev.udacitymovieapp.R;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
+import com.pal.dev.udacitymovieapp.utility.NetworkUtils;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -76,11 +78,20 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
         void bind(Context aContext, UiMovie aMovie) {
 
-            // This is how we use Picasso to load images from the internet.
-            Picasso.with(aContext)
-                    .load(aMovie.getPosterPath())
-                    .placeholder(R.color.colorAccent)
-                    .into(mIvMoviePoster);
+            if(NetworkUtils.isOnline(aContext)) {
+                // This is how we use Picasso to load images from the internet.
+                Picasso.with(aContext)
+                        .load(aMovie.getPosterFullImagePath())
+                        .placeholder(R.color.colorAccent)
+                        .into(mIvMoviePoster);
+            } else {
+                // This is how we use Picasso to load images from the cache.
+                Picasso.with(aContext)
+                        .load(aMovie.getPosterFullImagePath())
+                        .networkPolicy(NetworkPolicy.OFFLINE)
+                        .placeholder(R.color.colorAccent)
+                        .into(mIvMoviePoster);
+            }
 
         }
 

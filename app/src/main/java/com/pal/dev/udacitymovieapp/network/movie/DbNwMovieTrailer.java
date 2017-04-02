@@ -17,26 +17,25 @@ import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 @SuppressWarnings("unused")
 public class DbNwMovieTrailer implements DbNwMovieTrailerInterface{
 
-    @SerializedName(NetworkKeyConstant.KEY_MOVIE_VIDEO_ID)
+    @SerializedName(MovieNetworkContract.KEY_MOVIE_VIDEO_ID)
     private final String videoId;
 
-    @SerializedName(NetworkKeyConstant.KEY_MOVIE_VIDEO_KEY)
+    @SerializedName(MovieNetworkContract.KEY_MOVIE_VIDEO_KEY)
     private final String videoKey;
 
-    @SerializedName(NetworkKeyConstant.KEY_MOVIE_VIDEO_NAME)
+    @SerializedName(MovieNetworkContract.KEY_MOVIE_VIDEO_NAME)
     private final String videoName;
 
-    @SerializedName(NetworkKeyConstant.KEY_MOVIE_VIDEO_SITE)
+    @SerializedName(MovieNetworkContract.KEY_MOVIE_VIDEO_SITE)
     private final String videoSite;
 
-    @SerializedName(NetworkKeyConstant.KEY_MOVIE_VIDEO_SIZE)
+    @SerializedName(MovieNetworkContract.KEY_MOVIE_VIDEO_SIZE)
     private final long videoSize;
 
-    @SerializedName(NetworkKeyConstant.KEY_MOVIE_VIDEO_TYPE)
+    @SerializedName(MovieNetworkContract.KEY_MOVIE_VIDEO_TYPE)
     private final String videoType;
 
     // constructor to be populated when network returns the result.
-
     public DbNwMovieTrailer(String posterPath, String isAdultMovie,
                             String overview, String releaseDate,
                             long size, String originalTitle) {

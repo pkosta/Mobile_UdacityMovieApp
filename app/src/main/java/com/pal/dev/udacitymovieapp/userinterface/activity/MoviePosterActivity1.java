@@ -4,8 +4,11 @@
 
 package com.pal.dev.udacitymovieapp.userinterface.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,7 +26,6 @@ import android.widget.TextView;
 
 import com.pal.dev.udacitymovieapp.R;
 import com.pal.dev.udacitymovieapp.annotation.SortType;
-import com.pal.dev.udacitymovieapp.database.sqlite.FavoriteMovieDbContract;
 import com.pal.dev.udacitymovieapp.network.MovieNetworkManager;
 import com.pal.dev.udacitymovieapp.network.NetworkFactory;
 import com.pal.dev.udacitymovieapp.network.NetworkOperationCallback;
@@ -31,7 +33,6 @@ import com.pal.dev.udacitymovieapp.userinterface.adapter.ListItemClickListener;
 import com.pal.dev.udacitymovieapp.userinterface.adapter.MoviePosterAdapter;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 import com.pal.dev.udacitymovieapp.utility.BundleConstants;
-import com.pal.dev.udacitymovieapp.utility.NetworkUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -45,11 +46,10 @@ import static android.view.View.GONE;
  * @author Palash Kosta (kosta.palash@gmail.com)
  */
 
-public class MoviePosterActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,
+public class MoviePosterActivity1 extends AppCompatActivity implements
+        AdapterView.OnItemSelectedListener,
         ListItemClickListener,
-        LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final int LOADER_FAVORITE_MOVIES = 100;
+        LoaderManager.LoaderCallbacks<Cursor>{
 
     private RecyclerView mRvGridMoviePosters;
 
@@ -70,12 +70,12 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
         // checking the save instance state if exist use saved data.
         // this is may be due to screen orientation.
-        if (savedInstanceState != null
+        if(savedInstanceState != null
                 && savedInstanceState.containsKey(BundleConstants.BUNDLE_MOVIE_LIST)) {
 
             ArrayList<UiMovie> savedList = savedInstanceState.getParcelableArrayList(BundleConstants.BUNDLE_MOVIE_LIST);
 
-            if (savedList != null && !savedList.isEmpty()) {
+            if(savedList != null && !savedList.isEmpty()) {
                 initOrUpdateMoviePosters(savedList);
             } else {
                 getPopularMoviesFromWb();
@@ -85,13 +85,14 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
         }
 
 
+
     }
 
     /**
      * method to fetch the list of movies by most popular.
      */
     private void getPopularMoviesFromWb() {
-        if (NetworkUtils.isOnline(this)) {
+        if(isOnline()) {
             mTvEmptyDataView.setVisibility(GONE);
             mRvGridMoviePosters.setVisibility(View.VISIBLE);
             new GetMoviesListener(this, SortType.SORT_TYPE_POPULARITY).makeNetworkRequest();
@@ -106,7 +107,7 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
      * method to fetch the list of movies by top rated.
      */
     private void getRatedMoviesFromWb() {
-        if (NetworkUtils.isOnline(this)) {
+        if(isOnline()) {
             mTvEmptyDataView.setVisibility(GONE);
             mRvGridMoviePosters.setVisibility(View.VISIBLE);
             new GetMoviesListener(this, SortType.SORT_TYPE_RATING).makeNetworkRequest();
@@ -114,18 +115,6 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
             mTvEmptyDataView.setVisibility(View.VISIBLE);
             mRvGridMoviePosters.setVisibility(GONE);
         }
-    }
-
-    /**
-     * method to fetch the list of favorite movies from DB through provider.
-     */
-    private void getFavoriteMoviesFromDB() {
-        /*
-         * Ensures a loader is initialized and active. If the loader doesn't already exist, one is
-         * created and (if the activity/fragment is currently started) starts the loader. Otherwise
-         * the last created loader is re-used.
-         */
-        getSupportLoaderManager().initLoader(LOADER_FAVORITE_MOVIES, null, this);
     }
 
 
@@ -139,7 +128,6 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
     /**
      * metthod to initialize or update the movies recycler view data.
-     *
      * @param aMovieList, List of Movies to display.
      */
     private void initOrUpdateMoviePosters(@NonNull List<UiMovie> aMovieList) {
@@ -147,7 +135,7 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
         mMovieList = new ArrayList<>(aMovieList);
 
-        if (mMoviePosterAdapter != null) {
+        if(mMoviePosterAdapter != null) {
 
             // update the adapter.
             mMoviePosterAdapter.updateDataList(mMovieList);
@@ -166,22 +154,17 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
     /**
      * update the action bar title based on the option selected in the sort spinner.
-     *
      * @param selectedValue selected value in the sort spinner.
      */
     private void updateActionBarTitle(String selectedValue) {
-        if (getSupportActionBar() != null) {
-            if (selectedValue.equalsIgnoreCase(getString(R.string.sort_popularity))) {
+        if(getSupportActionBar() != null) {
+            if(selectedValue.equalsIgnoreCase(getString(R.string.sort_popularity))) {
 
                 getSupportActionBar().setTitle(R.string.lbl_toolbar_most_popular_movies);
 
-            } else if (selectedValue.equalsIgnoreCase(getString(R.string.sort_favorite))) {
-
-                getSupportActionBar().setTitle(R.string.lbl_toolbar_most_rated_movies);
-
             } else {
 
-                getSupportActionBar().setTitle(R.string.lbl_toolbar_favorites_movies);
+                getSupportActionBar().setTitle(R.string.lbl_toolbar_most_rated_movies);
 
             }
         }
@@ -210,17 +193,13 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String selectedValue = parent.getItemAtPosition(position).toString();
-        if (selectedValue.equalsIgnoreCase(getString(R.string.sort_rating))) {
+        if(selectedValue.equalsIgnoreCase(getString(R.string.sort_rating))) {
 
             getRatedMoviesFromWb();
 
-        } else if (selectedValue.equalsIgnoreCase(getString(R.string.sort_popularity))) {
-
-            getPopularMoviesFromWb();
-
         } else {
 
-            getFavoriteMoviesFromDB();
+            getPopularMoviesFromWb();
 
         }
         updateActionBarTitle(selectedValue);
@@ -247,10 +226,44 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mMovieList != null) {
+        if(mMovieList != null) {
             outState.putParcelableArrayList(BundleConstants.BUNDLE_MOVIE_LIST, mMovieList);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        Uri uri = Uri.parse("");
+        switch (loaderId) {
+            case 1:
+                return new CursorLoader(this,
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + loaderId);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        boolean cursorHasValidData = false;
+        if (data != null && data.moveToFirst()) {
+            /* We have valid data, continue on to bind the data to the UI */
+            cursorHasValidData = true;
+        }
+        // if not cursor has valid data, just no do anything.
+        if (cursorHasValidData) {
+            // set the views.
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     /**
@@ -259,15 +272,14 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
      */
     private static class GetMoviesListener implements NetworkOperationCallback<String, List<UiMovie>> {
 
-        private final WeakReference<MoviePosterActivity> mWeakPosterActivity;
+        private final WeakReference<MoviePosterActivity1> mWeakPosterActivity;
 
         private final MovieNetworkManager mMovieNetworkManager;
 
-        private
-        @SortType
+        private @SortType
         final String mSortType;
 
-        GetMoviesListener(MoviePosterActivity aActivity, @SortType String aSortType) {
+        GetMoviesListener(MoviePosterActivity1 aActivity, @SortType String aSortType) {
 
             mWeakPosterActivity = new WeakReference<>(aActivity);
             mMovieNetworkManager = new NetworkFactory().getMovieNetworkManager();
@@ -281,117 +293,34 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
         @Override
         public void onSuccess(String s, @NonNull List<UiMovie> uiMovies) {
-            if (mWeakPosterActivity.get() != null) {
+            if(mWeakPosterActivity.get() != null) {
                 mWeakPosterActivity.get().initOrUpdateMoviePosters(uiMovies);
             }
         }
 
         @Override
         public void onFailure(String s, Throwable throwable) {
-            if (mWeakPosterActivity.get() != null) {
+            if(mWeakPosterActivity.get() != null) {
                 mWeakPosterActivity.get().showErrorMessage();
             }
         }
 
         @Override
         public void onUnAuthorized() {
-            if (mWeakPosterActivity.get() != null) {
+            if(mWeakPosterActivity.get() != null) {
                 mWeakPosterActivity.get().showErrorMessage();
             }
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Loader Callbacks
-    ///////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
-
-        switch (loaderId) {
-
-            case LOADER_FAVORITE_MOVIES:
-
-                /* URI for all rows of weather data in our weather table */
-                Uri favoriteMoviesUri = FavoriteMovieDbContract.MovieDetails.CONTENT_URI_MOVIE_LIST;
-
-                return new CursorLoader(this,
-                        favoriteMoviesUri,
-                        null,
-                        null,
-                        null,
-                        null);
-
-            default:
-                throw new RuntimeException("Loader Not Implemented: " + loaderId);
-
-        }
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-        if(data != null && data.getCount() > 0) {
-            // valid data
-            mTvEmptyDataView.setVisibility(GONE);
-            mRvGridMoviePosters.setVisibility(View.VISIBLE);
-            List<UiMovie> uiMovies = getMoviesDetailsFromCursor(data);
-            initOrUpdateMoviePosters(uiMovies);
-
-        } else {
-            mTvEmptyDataView.setVisibility(View.VISIBLE);
-            mRvGridMoviePosters.setVisibility(GONE);
-        }
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        /*
-         * Since this Loader's data is now invalid, we need to clear the Adapter that is
-         * displaying the data.
-         */
-        mTvEmptyDataView.setVisibility(View.VISIBLE);
-        mRvGridMoviePosters.setVisibility(GONE);
-    }
-
-    private @NonNull List<UiMovie> getMoviesDetailsFromCursor(Cursor data) {
-
-        List<UiMovie> list = new ArrayList<>();
-        UiMovie uiMovie;
-
-        data.moveToFirst();
-        do {
-            String posterPath = data.getString(data.getColumnIndex(
-                    FavoriteMovieDbContract.MovieDetails.COLUMN_POSTER_PATH));
-
-            String overview = data.getString(data.getColumnIndex(
-                    FavoriteMovieDbContract.MovieDetails.COLUMN_OVERVIEW));
-
-            String releaseDate = data.getString(data.getColumnIndex(
-                    FavoriteMovieDbContract.MovieDetails.COLUMN_RELEASE_DATE));
-
-            long movieId = data.getLong(data.getColumnIndex(
-                    FavoriteMovieDbContract.MovieDetails.COLUMN_MOVIE_ID));
-
-            String originalTitle = data.getString(data.getColumnIndex(
-                    FavoriteMovieDbContract.MovieDetails.COLUMN_ORIGINAL_TITLE));
-
-            double popularity = 0;      // not saved in the local DB.
-
-            long voteCount = 0;      // not saved in the local DB.
-
-            float voteAverage = data.getFloat(data.getColumnIndex(
-                    FavoriteMovieDbContract.MovieDetails.COLUMN_VOTE_AVERAGE));
-
-            uiMovie = new UiMovie(posterPath, overview, releaseDate, movieId, originalTitle,
-                    popularity, voteCount, voteAverage, true);
-
-            list.add(uiMovie);
-
-        } while (data.moveToNext());
-
-
-        return list;
+    /**
+     * method to check if the network is connected or not.
+     * @return if connected, otherwise false.
+     */
+    private boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
