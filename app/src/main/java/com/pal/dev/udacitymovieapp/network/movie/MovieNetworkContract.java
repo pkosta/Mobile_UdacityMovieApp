@@ -10,6 +10,8 @@ package com.pal.dev.udacitymovieapp.network.movie;
 
 public class MovieNetworkContract {
 
+    // configurations belows
+
     public static final String BASE_URL = "https://api.themoviedb.org";
 
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
@@ -17,6 +19,8 @@ public class MovieNetworkContract {
     public final static String IMAGE_SIZE = "w185";
 
     public static final String API_KEY = "";      // TODO - Place your key here.
+
+    // json keys below
 
     public static final String CONSTANT_API_KEY = "api_key";
 

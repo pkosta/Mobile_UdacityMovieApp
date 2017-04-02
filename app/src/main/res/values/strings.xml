@@ -7,6 +7,8 @@
     <string name="sort_favorite">Favorite Movies</string>
     <string name="lbl_tv_release_date" >Release Date:</string>
 
+    <string name="action_share">Share</string>
+
     <string name="content_desc_movie_poster">Movie Poster</string>
 
     <string-array name="sort_array">
@@ -25,12 +27,15 @@
     <string name="lbl_heading_trailers">Trailers: %1$s</string>
     <string name="lbl_heading_reviews">Reviews: %1$s</string>
 
-    <string name="msg_loading">Loading…</string>
+    <string name="msg_loading">loading…</string>
     <string name="lbl_title_add_favorite">Add Favorite</string>
-    <string name="lbl_msg_add_favorite">By adding favorite, movie details will be accessible from Main screen and will work with offline mode.</string>
+    <string name="lbl_msg_add_favorite">By adding as favorite, movie will be added to your favorite list. Continue?</string>
     <string name="action_yes">Yes</string>
-    <string name="action_cancel">Cancel</string>
+    <string name="action_cancel">No</string>
 
     <string name="content_description_image_button_fav">Add movie as favorite</string>
+    <string name="lbl_title_remove_favorite">Remove Favorite</string>
+    <string name="lbl_msg_remove_favorite">By removing as favorite, movie will be removed from your favorite list. Do you want to continue?</string>
+    <string name="content_description_play_movie_trailer_video">Play movie trailer video</string>
 
 </resources>

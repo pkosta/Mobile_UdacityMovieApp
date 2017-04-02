@@ -53,6 +53,12 @@ public class FavoriteMovieDbContract {
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_VOTE_AVERAGE = "vote_average";
 
+
+        public static Uri buildContentUriWithId(long movieId) {
+            return CONTENT_URI_MOVIE_LIST.buildUpon()
+                    .appendPath(String.valueOf(movieId))
+                    .build();
+        }
     }
 
 

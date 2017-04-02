@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017. The Android Open Source Project
+ */
+
 package com.pal.dev.udacitymovieapp.userinterface.adapter;
 
 import android.content.Context;
@@ -5,9 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.pal.dev.udacitymovieapp.R;
+import com.pal.dev.udacitymovieapp.databinding.SingleItemMovieVideoBinding;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 
 import java.util.List;
@@ -18,11 +21,11 @@ import java.util.List;
 
 public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.MovieVideoViewHolder> {
 
-    private Context mContext;
+    private final Context mContext;
 
-    private List<UiMovieTrailer> mMovieTrailerList;
+    private final List<UiMovieTrailer> mMovieTrailerList;
 
-    private ListItemClickListener mItemClickListener;
+    private final ListItemClickListener mItemClickListener;
 
     public MovieVideosAdapter(Context context, List<UiMovieTrailer> movieTrailers,
                               ListItemClickListener listener) {
@@ -36,9 +39,12 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
     @Override
     public MovieVideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v= LayoutInflater.from(mContext)
-                .inflate(R.layout.single_item_movie_video, parent, false);
-        return new MovieVideoViewHolder(v);
+        /*View v= LayoutInflater.from(mContext)
+                .inflate(R.layout.single_item_movie_video, parent, false);*/
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        SingleItemMovieVideoBinding itemBinding =
+                SingleItemMovieVideoBinding.inflate(inflater, parent, false);
+        return new MovieVideoViewHolder(itemBinding);
     }
 
     @Override
@@ -58,18 +64,18 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
 
     class MovieVideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView tvMovieVideoName;
+        final SingleItemMovieVideoBinding itemBinding;
 
-        public MovieVideoViewHolder(View itemView) {
-            super(itemView);
-            tvMovieVideoName = (TextView) itemView.findViewById(R.id.tv_movie_trailer_name);
-            itemView.setOnClickListener(this);
+        public MovieVideoViewHolder(SingleItemMovieVideoBinding binding) {
+            super(binding.getRoot());
+            binding.getRoot().setOnClickListener(this);
+            this.itemBinding = binding;
         }
 
         void bind(Context aContext, UiMovieTrailer aMovieTrailer) {
 
             // This is how we use Picasso to load images from the internet.
-            tvMovieVideoName.setText(aMovieTrailer.getVideoName());
+            itemBinding.tvMovieTrailerName.setText(aMovieTrailer.getVideoName());
 
         }
 

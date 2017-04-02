@@ -6,6 +6,7 @@ package com.pal.dev.udacitymovieapp.userinterface.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,16 +15,15 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.pal.dev.udacitymovieapp.R;
 import com.pal.dev.udacitymovieapp.annotation.SortType;
 import com.pal.dev.udacitymovieapp.database.sqlite.FavoriteMovieDbContract;
+import com.pal.dev.udacitymovieapp.databinding.ActivityMoviePosterBinding;
 import com.pal.dev.udacitymovieapp.network.MovieNetworkManager;
 import com.pal.dev.udacitymovieapp.network.NetworkFactory;
 import com.pal.dev.udacitymovieapp.network.NetworkOperationCallback;
@@ -51,20 +51,16 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
     private static final int LOADER_FAVORITE_MOVIES = 100;
 
-    private RecyclerView mRvGridMoviePosters;
-
     private MoviePosterAdapter mMoviePosterAdapter;
 
     private ArrayList<UiMovie> mMovieList;
 
-    private TextView mTvEmptyDataView;
+    private ActivityMoviePosterBinding mBindingLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_poster);
-
-        initViews();
+        mBindingLayout = DataBindingUtil.setContentView(this, R.layout.activity_movie_poster);
 
         setUpSpinner(); // set up the sort spinner.
 
@@ -92,12 +88,12 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
      */
     private void getPopularMoviesFromWb() {
         if (NetworkUtils.isOnline(this)) {
-            mTvEmptyDataView.setVisibility(GONE);
-            mRvGridMoviePosters.setVisibility(View.VISIBLE);
+            mBindingLayout.tvEmptyRecyclerView.setVisibility(GONE);
+            mBindingLayout.rvGridMoviePoster.setVisibility(View.VISIBLE);
             new GetMoviesListener(this, SortType.SORT_TYPE_POPULARITY).makeNetworkRequest();
         } else {
-            mTvEmptyDataView.setVisibility(View.VISIBLE);
-            mRvGridMoviePosters.setVisibility(GONE);
+            mBindingLayout.tvEmptyRecyclerView.setVisibility(View.VISIBLE);
+            mBindingLayout.rvGridMoviePoster.setVisibility(GONE);
         }
 
     }
@@ -107,12 +103,12 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
      */
     private void getRatedMoviesFromWb() {
         if (NetworkUtils.isOnline(this)) {
-            mTvEmptyDataView.setVisibility(GONE);
-            mRvGridMoviePosters.setVisibility(View.VISIBLE);
+            mBindingLayout.tvEmptyRecyclerView.setVisibility(GONE);
+            mBindingLayout.rvGridMoviePoster.setVisibility(View.VISIBLE);
             new GetMoviesListener(this, SortType.SORT_TYPE_RATING).makeNetworkRequest();
         } else {
-            mTvEmptyDataView.setVisibility(View.VISIBLE);
-            mRvGridMoviePosters.setVisibility(GONE);
+            mBindingLayout.tvEmptyRecyclerView.setVisibility(View.VISIBLE);
+            mBindingLayout.rvGridMoviePoster.setVisibility(GONE);
         }
     }
 
@@ -126,15 +122,6 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
          * the last created loader is re-used.
          */
         getSupportLoaderManager().initLoader(LOADER_FAVORITE_MOVIES, null, this);
-    }
-
-
-    /**
-     * method to initialize the views.
-     */
-    private void initViews() {
-        mRvGridMoviePosters = (RecyclerView) findViewById(R.id.rv_grid_movie_poster);
-        mTvEmptyDataView = (TextView) findViewById(R.id.tv_empty_recycler_view);
     }
 
     /**
@@ -156,12 +143,23 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
         } else {
 
             // initialize the adapter.
-            mRvGridMoviePosters.setLayoutManager(new GridLayoutManager(this, 2));
+            mBindingLayout.rvGridMoviePoster.setLayoutManager(new GridLayoutManager(this, numberOfColumns()));
             mMoviePosterAdapter = new MoviePosterAdapter(this, mMovieList, this);
-            mRvGridMoviePosters.setAdapter(mMoviePosterAdapter);
+            mBindingLayout.rvGridMoviePoster.setAdapter(mMoviePosterAdapter);
             mMoviePosterAdapter.notifyDataSetChanged();
 
         }
+    }
+
+    private int numberOfColumns() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        // You can change this divider to adjust the size of the poster
+        int widthDivider = 400;
+        int width = displayMetrics.widthPixels;
+        int nColumns = width / widthDivider;
+        if (nColumns < 2) return 2;
+        return nColumns;
     }
 
     /**
@@ -175,7 +173,7 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
                 getSupportActionBar().setTitle(R.string.lbl_toolbar_most_popular_movies);
 
-            } else if (selectedValue.equalsIgnoreCase(getString(R.string.sort_favorite))) {
+            } else if (selectedValue.equalsIgnoreCase(getString(R.string.sort_rating))) {
 
                 getSupportActionBar().setTitle(R.string.lbl_toolbar_most_rated_movies);
 
@@ -192,18 +190,17 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
     }
 
     private void setUpSpinner() {
-        Spinner spinner = (Spinner) findViewById(R.id.sort_spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        mBindingLayout.sortSpinner.setAdapter(adapter);
 
-        spinner.setOnItemSelectedListener(this);
+        mBindingLayout.sortSpinner.setOnItemSelectedListener(this);
 
-        updateActionBarTitle(spinner.getSelectedItem().toString());
+        updateActionBarTitle(mBindingLayout.sortSpinner.getSelectedItem().toString());
     }
 
 
@@ -282,6 +279,7 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
         @Override
         public void onSuccess(String s, @NonNull List<UiMovie> uiMovies) {
             if (mWeakPosterActivity.get() != null) {
+
                 mWeakPosterActivity.get().initOrUpdateMoviePosters(uiMovies);
             }
         }
@@ -333,14 +331,18 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
 
         if(data != null && data.getCount() > 0) {
             // valid data
-            mTvEmptyDataView.setVisibility(GONE);
-            mRvGridMoviePosters.setVisibility(View.VISIBLE);
-            List<UiMovie> uiMovies = getMoviesDetailsFromCursor(data);
-            initOrUpdateMoviePosters(uiMovies);
+            if (mBindingLayout.sortSpinner.getSelectedItem().toString()
+                    .equalsIgnoreCase(getString(R.string.sort_favorite))) {
 
+                mBindingLayout.tvEmptyRecyclerView.setVisibility(GONE);
+                mBindingLayout.rvGridMoviePoster.setVisibility(View.VISIBLE);
+                List<UiMovie> uiMovies = getMoviesDetailsFromCursor(data);
+                initOrUpdateMoviePosters(uiMovies);
+
+            }
         } else {
-            mTvEmptyDataView.setVisibility(View.VISIBLE);
-            mRvGridMoviePosters.setVisibility(GONE);
+            mBindingLayout.tvEmptyRecyclerView.setVisibility(View.VISIBLE);
+            mBindingLayout.rvGridMoviePoster.setVisibility(GONE);
         }
 
     }
@@ -351,8 +353,8 @@ public class MoviePosterActivity extends AppCompatActivity implements AdapterVie
          * Since this Loader's data is now invalid, we need to clear the Adapter that is
          * displaying the data.
          */
-        mTvEmptyDataView.setVisibility(View.VISIBLE);
-        mRvGridMoviePosters.setVisibility(GONE);
+        mBindingLayout.tvEmptyRecyclerView.setVisibility(View.VISIBLE);
+        mBindingLayout.rvGridMoviePoster.setVisibility(GONE);
     }
 
     private @NonNull List<UiMovie> getMoviesDetailsFromCursor(Cursor data) {

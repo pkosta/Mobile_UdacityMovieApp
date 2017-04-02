@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017. The Android Open Source Project
+ */
+
 package com.pal.dev.udacitymovieapp.userinterface.model;
 
 /*

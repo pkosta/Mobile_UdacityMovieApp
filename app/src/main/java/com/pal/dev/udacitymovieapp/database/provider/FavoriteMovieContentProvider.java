@@ -29,20 +29,23 @@ import static com.pal.dev.udacitymovieapp.database.sqlite.FavoriteMovieDbContrac
 
 public class FavoriteMovieContentProvider extends ContentProvider {
 
-    public static final int FAV_MOVIE_LIST = 100;
+    private static final int FAV_MOVIE_LIST = 100;
+    private static final int MOVIE_WITH_ID = 101;
 
-    public static final UriMatcher sUriMatcher = buildUriMatcher();
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    public static UriMatcher buildUriMatcher() {
+    private static UriMatcher buildUriMatcher() {
 
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(FavoriteMovieDbContract.AUTHORITY,
                 FavoriteMovieDbContract.PATH_FAV_MOVIE_LIST, FAV_MOVIE_LIST);
+        uriMatcher.addURI(FavoriteMovieDbContract.AUTHORITY,
+                FavoriteMovieDbContract.PATH_FAV_MOVIE_LIST + "/#", MOVIE_WITH_ID);
         return uriMatcher;
     }
 
     // Member variable for a FavoriteMovieDbHelper that's initialized in the onCreate() method.
-    FavoriteMovieDbHelper mFavoriteMovieDbHelper;
+    private FavoriteMovieDbHelper mFavoriteMovieDbHelper;
 
     @Override
     public boolean onCreate() {
@@ -70,6 +73,25 @@ public class FavoriteMovieContentProvider extends ContentProvider {
                 refCursor = sqLiteDatabase.query(FavoriteMovieDbContract.MovieDetails.TABLE_NAME,
                         projection, selection, selectionArgs, null, null, sortOrder);
 
+                break;
+            case MOVIE_WITH_ID:
+                /*
+                 * In order to determine the date associated with this URI, we look at the last
+                 * path segment. In the comment above, the last path segment is 1472214172 and
+                 * represents the number of seconds since the epoch, or UTC time.
+                 */
+                String movieId = uri.getLastPathSegment();
+
+                /*
+                 * The query method accepts a string array of arguments, as there may be more
+                 * than one "?" in the selection statement. Even though in our case, we only have
+                 * one "?", we have to create a string array that only contains one element
+                 * because this method signature accepts a string array.
+                 */
+                String[] selectionArguments = new String[]{movieId};
+                refCursor = sqLiteDatabase.query(FavoriteMovieDbContract.MovieDetails.TABLE_NAME,
+                        projection, FavoriteMovieDbContract.MovieDetails.COLUMN_MOVIE_ID + " = ? ",
+                        selectionArguments, null, null, sortOrder);
                 break;
 
             default:

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2017. The Android Open Source Project
+ */
+
 package com.pal.dev.udacitymovieapp.userinterface.adapter;
 
 import android.content.Context;
@@ -6,9 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.pal.dev.udacitymovieapp.R;
+import com.pal.dev.udacitymovieapp.databinding.SingleItemMovieReviewBinding;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieReview;
 
 import java.util.List;
@@ -19,11 +22,11 @@ import java.util.List;
 
 public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapter.MovieReviewViewHolder> {
 
-    private Context mContext;
+    private final Context mContext;
 
-    private List<UiMovieReview> mMovieReviewList;
+    private final List<UiMovieReview> mMovieReviewList;
 
-    private ListItemClickListener mItemClickListener;
+    private final ListItemClickListener mItemClickListener;
 
     public MovieReviewsAdapter(Context context, List<UiMovieReview> movieReviews,
                                @Nullable ListItemClickListener listener) {
@@ -37,9 +40,14 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
     @Override
     public MovieReviewViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v= LayoutInflater.from(mContext)
-                .inflate(R.layout.single_item_movie_review, parent, false);
-        return new MovieReviewViewHolder(v);
+//        View v= LayoutInflater.from(mContext)
+//                .inflate(R.layout.single_item_movie_review, parent, false);
+        LayoutInflater layoutInflater =
+                LayoutInflater.from(parent.getContext());
+        SingleItemMovieReviewBinding itemBinding =
+                SingleItemMovieReviewBinding.inflate(layoutInflater, parent, false);
+
+        return new MovieReviewViewHolder(itemBinding);
     }
 
     @Override
@@ -59,22 +67,19 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
 
     class MovieReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView tvMovieReviewAuthor;
+        final SingleItemMovieReviewBinding itemBinding;
 
-        TextView tvMovieReviewContent;
-
-        public MovieReviewViewHolder(View itemView) {
-            super(itemView);
-            tvMovieReviewAuthor = (TextView) itemView.findViewById(R.id.tv_movie_review_author);
-            tvMovieReviewContent = (TextView) itemView.findViewById(R.id.tv_movie_review_content);
-            itemView.setOnClickListener(this);
+        public MovieReviewViewHolder(SingleItemMovieReviewBinding binding) {
+            super(binding.getRoot());
+            binding.getRoot().setOnClickListener(this);
+            this.itemBinding = binding;
         }
 
         void bind(Context aContext, UiMovieReview aMovieReview) {
 
             // This is how we use Picasso to load images from the internet.
-            tvMovieReviewAuthor.setText(aMovieReview.getAuthor());
-            tvMovieReviewContent.setText(aMovieReview.getContent());
+            itemBinding.tvMovieReviewAuthor.setText(aMovieReview.getAuthor());
+            itemBinding.tvMovieReviewContent.setText(aMovieReview.getContent());
 
         }
 

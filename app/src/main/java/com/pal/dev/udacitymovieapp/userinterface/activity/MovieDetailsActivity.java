@@ -7,22 +7,27 @@ package com.pal.dev.udacitymovieapp.userinterface.activity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.pal.dev.udacitymovieapp.R;
 import com.pal.dev.udacitymovieapp.database.sqlite.FavoriteMovieDbContract;
+import com.pal.dev.udacitymovieapp.databinding.ActivityScrollMovieDetailBinding;
 import com.pal.dev.udacitymovieapp.network.MovieNetworkManager;
 import com.pal.dev.udacitymovieapp.network.NetworkFactory;
 import com.pal.dev.udacitymovieapp.network.NetworkOperationCallback;
@@ -33,6 +38,8 @@ import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieReview;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovieTrailer;
 import com.pal.dev.udacitymovieapp.utility.BundleConstants;
+import com.pal.dev.udacitymovieapp.utility.Constant;
+import com.pal.dev.udacitymovieapp.utility.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -46,45 +53,32 @@ import java.util.List;
 
 public class MovieDetailsActivity extends AppCompatActivity implements
         ListItemClickListener,
-        View.OnClickListener {
+        View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+
+    private static final int LOADER_FAVORITE_MOVIE_WITH_ID = 101;
 
     private UiMovie mCurrentUiMovie;
-
-    //Layout elements
-    private TextView mTvMovieName;
-
-    private TextView mTvMovieReleaseDate;
-
-    private TextView mTvMovieUserRating;
-
-    private TextView mTvMovieOverview;
-
-    private ImageView mIvMoviePoster;
 
     private MovieVideosAdapter mMovieVideoAdapter;
 
     private MovieReviewsAdapter mMovieReviewAdapter;
 
-    private RecyclerView mRvMovieVideos;
-
-    private RecyclerView mRvMovieReviews;
-
     private ArrayList<UiMovieTrailer> mMovieTrailers;
 
     private ArrayList<UiMovieReview> mMovieReviews;
 
-    private ImageButton mIbFavoriteMovieToggle;
+    private MenuItem mShareMenuItem;
 
-    private TextView mTvHeadingTrailers, mTvHeadingReviews;
+    private ActivityScrollMovieDetailBinding mBindingLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scroll_movie_detail);
+        mBindingLayout = DataBindingUtil.setContentView(this, R.layout.activity_scroll_movie_detail);
 
         setUpActionBar();   // set up the acion bar.
 
-        initViews();        // initialize the ui views.
+        setLayoutProperties();        // initialize the ui views.
 
         setIntentData();    // get the intent data and set to the member variables.
 
@@ -138,6 +132,20 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /* Use AppCompatActivity's method getMenuInflater to get a handle on the menu inflater */
+        MenuInflater inflater = getMenuInflater();
+        /* Use the inflater's inflate method to inflate our menu layout to this menu */
+        inflater.inflate(R.menu.movie_details, menu);
+
+        mShareMenuItem = menu.findItem(R.id.action_share);
+        mShareMenuItem.setVisible(false);
+
+        /* Return true so that the menu is displayed in the Toolbar */
+        return true;
+    }
+
     /**
      * method to set the action bar title and home button enabled.
      */
@@ -150,34 +158,48 @@ public class MovieDetailsActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        /* Home button item clicked */
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
+
+        /* Share menu item clicked */
+        if (item.getItemId() == R.id.action_share) {
+            Intent shareIntent = createFirstTrailerShareIntent();
+            if(shareIntent != null &&
+                    shareIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(shareIntent);
+            }
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+
+    }
+
+    private Intent createFirstTrailerShareIntent() {
+        if(mMovieTrailers != null && mMovieTrailers.size() > 0) {
+            Intent shareIntent = ShareCompat.IntentBuilder.from(this)
+                    .setType("text/plain")
+                    .setText("http://m.youtube.com/watch?v=" + mMovieTrailers.get(0).getVideoKey())
+                    .getIntent();
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            return shareIntent;
+        } else {
+            return null;
+        }
 
     }
 
     /**
      * method to initialize the views.
      */
-    private void initViews() {
+    private void setLayoutProperties() {
 
-        mTvMovieName = (TextView) findViewById(R.id.tv_movie_name);
-        mTvMovieReleaseDate = (TextView) findViewById(R.id.tv_release_date);
-        mTvMovieUserRating = (TextView) findViewById(R.id.tv_user_rating);
-        mTvMovieOverview = (TextView) findViewById(R.id.tv_movie_overview);
-
-        mTvHeadingTrailers = (TextView) findViewById(R.id.tv_heading_trailers);
-        mTvHeadingReviews = (TextView) findViewById(R.id.tv_heading_reviews);
-
-        mIvMoviePoster = (ImageView) findViewById(R.id.iv_movie_poster);
-
-        mRvMovieVideos = (RecyclerView) findViewById(R.id.rv_movie_videos);
-
-        mRvMovieReviews = (RecyclerView) findViewById(R.id.rv_movie_reviews);
-
-        mIbFavoriteMovieToggle = (ImageButton) findViewById(R.id.ib_fav_movie_toggle);
-        mIbFavoriteMovieToggle.setOnClickListener(this);
+        mBindingLayout.rvMovieVideos.setNestedScrollingEnabled(false);
+        mBindingLayout.rvMovieReviews.setNestedScrollingEnabled(false);
+        mBindingLayout.ibFavMovieToggle.setOnClickListener(this);
 
     }
 
@@ -201,87 +223,96 @@ public class MovieDetailsActivity extends AppCompatActivity implements
      */
     private void updateUserInterface() {
 
-        mTvMovieName.setText(mCurrentUiMovie.getOriginalTitle());
-        mTvMovieReleaseDate.setText(mCurrentUiMovie.getReleaseDate());
-        mTvMovieUserRating.setText(String.valueOf(mCurrentUiMovie.getVoteAverage()));
-        mTvMovieOverview.setText(mCurrentUiMovie.getOverview());
+        mBindingLayout.tvMovieName.setText(mCurrentUiMovie.getOriginalTitle());
+        mBindingLayout.tvReleaseDate.setText(mCurrentUiMovie.getReleaseDate());
+        mBindingLayout.tvUserRating.setText(String.valueOf(mCurrentUiMovie.getVoteAverage()));
+        mBindingLayout.tvMovieOverview.setText(mCurrentUiMovie.getOverview());
 
         // asynchronous loading of the image.
         Picasso.with(this)
                 .load(mCurrentUiMovie.getPosterFullImagePath())
                 .placeholder(R.color.colorAccent)
-                .into(mIvMoviePoster);
+                .into(mBindingLayout.ivMoviePoster);
 
-        if (mCurrentUiMovie.isFavorite()) {
-            mIbFavoriteMovieToggle.setTag(true);
-        } else {
-            mIbFavoriteMovieToggle.setTag(false);
+        getSupportLoaderManager().initLoader(LOADER_FAVORITE_MOVIE_WITH_ID, null, this);
+
+        if(mShareMenuItem != null) {
+            mShareMenuItem.setVisible(false);
         }
-        changeFavoriteImageButton(mCurrentUiMovie.isFavorite());
 
-
-        mTvHeadingTrailers.setText(getString(R.string.lbl_heading_trailers, getString(R.string.msg_loading)));
-        mTvHeadingReviews.setText(getString(R.string.lbl_heading_reviews, getString(R.string.msg_loading)));
+        mBindingLayout.tvHeadingTrailers.setText(getString(R.string.lbl_heading_trailers, getString(R.string.msg_loading)));
+        mBindingLayout.tvHeadingReviews.setText(getString(R.string.lbl_heading_reviews, getString(R.string.msg_loading)));
 
     }
 
     private void getMovieTrailersFromWb() {
-        Log.d("BUGS","Web Service Request for Trailers");
-        MovieNetworkManager movieNetworkManager =
-                new NetworkFactory().getMovieNetworkManager();
-        movieNetworkManager.getMovieTrailers(mCurrentUiMovie.getMovieId(),
-                new NetworkOperationCallback<String, List<UiMovieTrailer>>() {
-                    @Override
-                    public void onSuccess(String s, List<UiMovieTrailer> dbNwMovieTrailers) {
 
-                        Log.d("BUGS","Web Service Request for Trailers - Completed");
+        if(NetworkUtils.isOnline(this)) {
+            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Trailers");
+            MovieNetworkManager movieNetworkManager =
+                    new NetworkFactory().getMovieNetworkManager();
+            movieNetworkManager.getMovieTrailers(mCurrentUiMovie.getMovieId(),
+                    new NetworkOperationCallback<String, List<UiMovieTrailer>>() {
+                        @Override
+                        public void onSuccess(String s, List<UiMovieTrailer> dbNwMovieTrailers) {
 
-                        mTvHeadingTrailers.setText(getString(R.string.lbl_heading_trailers,
-                                String.valueOf(dbNwMovieTrailers.size())));
+                            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Trailers - Completed");
+                            showMovieVideos(dbNwMovieTrailers);
+                        }
 
-                        showMovieVideos(dbNwMovieTrailers);
-                    }
+                        @Override
+                        public void onFailure(String s, Throwable throwable) {
+                            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Trailers - Failed " +
+                                    "Please check your connection and API keys and retry.");
+                        }
 
-                    @Override
-                    public void onFailure(String s, Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onUnAuthorized() {
-
-                    }
-                });
+                        @Override
+                        public void onUnAuthorized() {
+                            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Trailers - UnAuthorized" +
+                                    "Please check your API key and retry.");
+                        }
+                    });
+        }
     }
 
     private void getMovieReviewsFromWb() {
-        MovieNetworkManager movieNetworkManager =
-                new NetworkFactory().getMovieNetworkManager();
-        movieNetworkManager.getMovieReviews(mCurrentUiMovie.getMovieId(),
-                new NetworkOperationCallback<String, List<UiMovieReview>>() {
-                    @Override
-                    public void onSuccess(String s, List<UiMovieReview> uiMovieReviews) {
 
-                        mTvHeadingReviews.setText(getString(R.string.lbl_heading_reviews,
-                                String.valueOf(uiMovieReviews.size())));
+        if(NetworkUtils.isOnline(this)) {
+            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Reviews");
+            MovieNetworkManager movieNetworkManager =
+                    new NetworkFactory().getMovieNetworkManager();
+            movieNetworkManager.getMovieReviews(mCurrentUiMovie.getMovieId(),
+                    new NetworkOperationCallback<String, List<UiMovieReview>>() {
+                        @Override
+                        public void onSuccess(String s, List<UiMovieReview> uiMovieReviews) {
 
+                            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Reviews - Completed");
+                            showMovieReviews(uiMovieReviews);
 
-                        showMovieReviews(uiMovieReviews);
-                    }
+                        }
 
-                    @Override
-                    public void onFailure(String s, Throwable throwable) {
+                        @Override
+                        public void onFailure(String s, Throwable throwable) {
+                            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Reviews - Failed " +
+                                    "Please check your connection and API keys and retry.");
 
-                    }
+                        }
 
-                    @Override
-                    public void onUnAuthorized() {
+                        @Override
+                        public void onUnAuthorized() {
+                            Log.d(Constant.APP_LOG_TAG,"Web Service Request for Reviews - UnAuthorized" +
+                                    "Please check your API key and retry.");
 
-                    }
-                });
+                        }
+                    });
+
+        }
     }
 
     private void showMovieReviews(List<UiMovieReview> movieReviews) {
+
+        mBindingLayout.tvHeadingReviews.setText(getString(R.string.lbl_heading_reviews,
+                String.valueOf(movieReviews.size())));
 
         mMovieReviews = new ArrayList<>(movieReviews);
 
@@ -292,10 +323,10 @@ public class MovieDetailsActivity extends AppCompatActivity implements
 
         } else {
 
-            mRvMovieReviews.setLayoutManager(new LinearLayoutManager(this));
+            mBindingLayout.rvMovieReviews.setLayoutManager(new LinearLayoutManager(this));
             // passing null below to avoid click event.
             mMovieReviewAdapter = new MovieReviewsAdapter(this, mMovieReviews, null);
-            mRvMovieReviews.setAdapter(mMovieReviewAdapter);
+            mBindingLayout.rvMovieReviews.setAdapter(mMovieReviewAdapter);
             mMovieReviewAdapter.notifyDataSetChanged();
 
         }
@@ -303,6 +334,12 @@ public class MovieDetailsActivity extends AppCompatActivity implements
     }
 
     private void showMovieVideos(List<UiMovieTrailer> movieTrailers) {
+        mBindingLayout.tvHeadingTrailers.setText(getString(R.string.lbl_heading_trailers,
+                String.valueOf(movieTrailers.size())));
+
+        if(mShareMenuItem != null) {
+            mShareMenuItem.setVisible(true);
+        }
 
         mMovieTrailers = new ArrayList<>(movieTrailers);
 
@@ -313,9 +350,9 @@ public class MovieDetailsActivity extends AppCompatActivity implements
 
         } else {
 
-            mRvMovieVideos.setLayoutManager(new LinearLayoutManager(this));
+            mBindingLayout.rvMovieVideos.setLayoutManager(new LinearLayoutManager(this));
             mMovieVideoAdapter = new MovieVideosAdapter(this, movieTrailers, this);
-            mRvMovieVideos.setAdapter(mMovieVideoAdapter);
+            mBindingLayout.rvMovieVideos.setAdapter(mMovieVideoAdapter);
             mMovieVideoAdapter.notifyDataSetChanged();
 
         }
@@ -326,13 +363,90 @@ public class MovieDetailsActivity extends AppCompatActivity implements
         watchYoutubeVideo(mMovieTrailers.get(clickedItemPosition).getVideoKey());
     }
 
-    public void watchYoutubeVideo(String id) {
+    private void watchYoutubeVideo(String id) {
         //Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.youtube.com/watch?v=" + id));
         appIntent.putExtra("VIDEO_ID", id);
         if (appIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(appIntent);
         }
+    }
+
+    private void changeFavoriteImageButton(boolean isSelected) {
+        if (isSelected) {
+            // selected image
+            mBindingLayout.ibFavMovieToggle
+                    .setBackground(ContextCompat.getDrawable(this, R.drawable.ic_favorite_white_24px));
+        } else {
+            // un-seleted image.
+            mBindingLayout.ibFavMovieToggle
+                    .setBackground(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border_white_24px));
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int clickedView = v.getId();
+        // when user select the movie as favorite, the app will store the movie in the local database.
+        // when user un-select the movie as favorite, the app will remove the movie from the local db
+        switch (clickedView) {
+            case R.id.ib_fav_movie_toggle:
+                if (mBindingLayout.ibFavMovieToggle.getTag().equals(true)) {
+                    removeFavorite();
+                } else {
+                    addToFavorite();
+                }
+                break;
+
+            default:
+
+        }
+    }
+
+    private void addToFavorite() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.lbl_title_add_favorite);
+        builder.setMessage(R.string.lbl_msg_add_favorite);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.action_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mBindingLayout.ibFavMovieToggle.setTag(true);
+                saveSelectedFavoriteMovie();
+            }
+        });
+        builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // dismiss the dialog.
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+    private void removeFavorite() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.lbl_title_remove_favorite);
+        builder.setMessage(R.string.lbl_msg_remove_favorite);
+        builder.setCancelable(false);
+        builder.setPositiveButton(getString(R.string.action_yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mBindingLayout.ibFavMovieToggle.setTag(false);
+                removeMovieFromDb();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // simply dismiss the dialog.
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -360,7 +474,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements
             getContentResolver().insert(FavoriteMovieDbContract.MovieDetails.CONTENT_URI_MOVIE_LIST,
                     contentValues);
 
-            changeFavoriteImageButton((Boolean) mIbFavoriteMovieToggle.getTag());
+            changeFavoriteImageButton((Boolean) mBindingLayout.ibFavMovieToggle.getTag());
         }
 
     }
@@ -376,84 +490,45 @@ public class MovieDetailsActivity extends AppCompatActivity implements
                 selection,
                 selectonArgss);
         if(numberOfRowsDeleted > 0 ) {
-            changeFavoriteImageButton((Boolean) mIbFavoriteMovieToggle.getTag());
+            changeFavoriteImageButton((Boolean) mBindingLayout.ibFavMovieToggle.getTag());
         }
 
     }
 
-    private void changeFavoriteImageButton(boolean isSelected) {
-        if (isSelected) {
-            // selected image
-            mIbFavoriteMovieToggle.setBackground(ContextCompat.getDrawable(this, R.drawable.ic_favorite_white_24px));
-        } else {
-            // unseleted image.
-            mIbFavoriteMovieToggle.setBackground(ContextCompat.getDrawable(this, R.drawable.ic_favorite_border_white_24px));
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case LOADER_FAVORITE_MOVIE_WITH_ID:
+                Uri movieWithIdUri = FavoriteMovieDbContract.MovieDetails
+                        .buildContentUriWithId(mCurrentUiMovie.getMovieId());
+                return new CursorLoader(
+                        this,
+                        movieWithIdUri,
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
         }
     }
 
     @Override
-    public void onClick(View v) {
-        int clickedView = v.getId();
-        // when user select the movie as favorite, the app will store the movie in the local database.
-        // when user un-select the movie as favorite, the app will remove the movie from the local db
-        switch (clickedView) {
-            case R.id.ib_fav_movie_toggle:
-                if (mIbFavoriteMovieToggle.getTag().equals(true)) {
-                    removeFavorite();
-                } else {
-                    addToFavorite();
-                }
-                break;
-
-            default:
-
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data != null && data.getCount() > 0) {
+            mBindingLayout.ibFavMovieToggle.setTag(true);
+            changeFavoriteImageButton(true);
+        } else {
+            mBindingLayout.ibFavMovieToggle.setTag(false);
+            changeFavoriteImageButton(false);
         }
+
     }
 
-    private void addToFavorite() {
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.lbl_title_add_favorite);
-        builder.setMessage(R.string.lbl_msg_add_favorite);
-        builder.setCancelable(false);
-        builder.setPositiveButton(R.string.action_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mIbFavoriteMovieToggle.setTag(true);
-                saveSelectedFavoriteMovie();
-            }
-        });
-        builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // dismiss the dialog.
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
     }
-
-    private void removeFavorite() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Remove Favorite");
-        builder.setMessage("By removing favorite, movie details will not be accessible in offline mode.");
-        builder.setCancelable(false);
-        builder.setPositiveButton(getString(R.string.action_yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mIbFavoriteMovieToggle.setTag(false);
-                removeMovieFromDb();
-            }
-        });
-        builder.setNegativeButton(getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // simply dismiss the dialog.
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
-    }
-
 }

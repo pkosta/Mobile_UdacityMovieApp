@@ -10,9 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.pal.dev.udacitymovieapp.R;
+import com.pal.dev.udacitymovieapp.databinding.SingleItemMoviePosterBinding;
 import com.pal.dev.udacitymovieapp.userinterface.model.UiMovie;
 import com.pal.dev.udacitymovieapp.utility.NetworkUtils;
 import com.squareup.picasso.NetworkPolicy;
@@ -45,9 +45,16 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     @Override
     public MoviePosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.single_item_movie_poster, parent, false);
-        return new MoviePosterViewHolder(view);
+
+        LayoutInflater layoutInflater =
+                LayoutInflater.from(parent.getContext());
+        SingleItemMoviePosterBinding itemBinding =
+                SingleItemMoviePosterBinding.inflate(layoutInflater, parent, false);
+
+        /*View view = LayoutInflater.from(mContext)
+                .inflate(R.layout.single_item_movie_poster, parent, false);*/
+
+        return new MoviePosterViewHolder(itemBinding);
     }
 
     @Override
@@ -67,13 +74,14 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     class MoviePosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private final ImageView mIvMoviePoster;
 
-        MoviePosterViewHolder(View itemView) {
-            super(itemView);
-            mIvMoviePoster = (ImageView) itemView.findViewById(R.id.iv_movie_poster);
+        final SingleItemMoviePosterBinding itemBinding;
+
+        MoviePosterViewHolder(SingleItemMoviePosterBinding binding) {
+            super(binding.getRoot());
             // set onclick listener.
-            itemView.setOnClickListener(this);
+            binding.getRoot().setOnClickListener(this);
+            this.itemBinding = binding;
         }
 
         void bind(Context aContext, UiMovie aMovie) {
@@ -83,14 +91,14 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
                 Picasso.with(aContext)
                         .load(aMovie.getPosterFullImagePath())
                         .placeholder(R.color.colorAccent)
-                        .into(mIvMoviePoster);
+                        .into(itemBinding.ivMoviePoster);
             } else {
                 // This is how we use Picasso to load images from the cache.
                 Picasso.with(aContext)
                         .load(aMovie.getPosterFullImagePath())
                         .networkPolicy(NetworkPolicy.OFFLINE)
                         .placeholder(R.color.colorAccent)
-                        .into(mIvMoviePoster);
+                        .into(itemBinding.ivMoviePoster);
             }
 
         }

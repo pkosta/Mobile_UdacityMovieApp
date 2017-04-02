@@ -1,19 +1,23 @@
+/*
+ * Copyright (c) 2017. The Android Open Source Project
+ */
+
 package com.pal.dev.udacitymovieapp.userinterface.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
+/*
  * Created by Palash on 01/04/17.
  */
 
 public class UiMovieReview implements Parcelable {
 
-    private String id;
+    private final String id;
 
-    private String author;
+    private final String author;
 
-    private String content;
+    private final String content;
 
     public static final Creator<UiMovieReview> CREATOR = new Creator<UiMovieReview>() {
         @Override
@@ -43,7 +47,7 @@ public class UiMovieReview implements Parcelable {
         return url;
     }
 
-    private String url;
+    private final String url;
 
 
 
